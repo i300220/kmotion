@@ -42,7 +42,7 @@ permanently the camera parameters without user agreement/knowledge
 So uncomment where stated to do it)
 """
 
-import os, urllib2, cPickle, time
+import os, urllib, cPickle, time
 import logger
 
 log_level = 'DEBUG'
@@ -54,29 +54,11 @@ URL_CGI_MINUS_Y = '/decoder_control.cgi?command=2&onestep=1'
 URL_CGI_CALIB =   '/decoder_control.cgi?command=92'
 # uncomment to speed up motors
 URL_CGI_CALIB2 =   '/set_misc.cgi?ptz_patrol_rate=0' 
+
 MIN_X=0
 MAX_X=870
 MIN_Y=0
 MAX_Y=345
-# gathered from FI8910W camera.htm
-URL_CGI_MODE_60Hz = '/camera_control.cgi?param=3&value=1'
-URL_CGI_MODE_OUTDOOR = '/camera_control.cgi?param=3&value=2'
-URL_CGI_PTZ_LEFT_UP = '/decoder_control.cgi?command=91'
-URL_CGI_PTZ_RIGHT_UP = '/decoder_control.cgi?command=90'
-URL_CGI_PTZ_LEFT_DOWN = '/decoder_control.cgi?command=93'
-URL_CGI_PTZ_RIGHT_DOWN = '/decoder_control.cgi?command=92'
-URL_CGI_PTZ_CENTER = '/decoder_control.cgi?command=25'
-URL_CGI_PTZ_VPATROL = '/decoder_control.cgi?command=26'
-URL_CGI_PTZ_VPATROL_STOP = '/decoder_control.cgi?command=27'
-URL_CGI_PTZ_HPATROL = '/decoder_control.cgi?command=28'
-URL_CGI_PTZ_HPATROL_STOP = '/decoder_control.cgi?command=29'
-URL_CGI_PTZ_PELCO_D_HPATROL = '/decoder_control.cgi?command=20'
-URL_CGI_PTZ_PELCO_D_HPATROL_STOP = '/decoder_control.cgi?command=21'
-URL_CGI_IO_ON = '/decoder_control.cgi?command=95'
-URL_CGI_IO_OFF = '/decoder_control.cgi?command=94'
-URL_CGI_R320_240 = '/camera_control.cgi?param=0&value=8';
-URL_CGI_R640_480 = '/camera_control.cgi?param=0&value=32';
-URL_CGI_GREEN_LED_OFF = '/set_misc.cgi?led_mode=2';
 
 def rel_xy(feed, feed_url, feed_proxy, feed_lgn_name, feed_lgn_pw,
 feed_x, feed_y, step_x, step_y):
@@ -167,15 +149,11 @@ feed_x, feed_y, step_x, step_y):
 
     logger.log('cal_xy() - feed:%s, x:%s, y:%s' % (feed, feed_x,
 feed_y), 'DEBUG')
-    touch_url(feed_url, URL_CGI_R640_480, feed_proxy, feed_lgn_name, feed_lgn_pw)
-    touch_url(feed_url, URL_CGI_MODE_OUTDOOR, feed_proxy, feed_lgn_name, feed_lgn_pw)
-    # disable IR for cameras that are inside looking out a window
-    if feed == 5:
-        touch_url(feed_url, URL_CGI_IO_OFF, feed_proxy, feed_lgn_name, feed_lgn_pw)
+
 # uncomment to speed up motors
-#    touch_url(feed_url, URL_CGI_CALIB2, feed_proxy, feed_lgn_name, feed_lgn_pw)
-# disabled 20140315 to avoid reset to right-down position
-    #touch_url(feed_url, URL_CGI_CALIB, feed_proxy, feed_lgn_name, feed_lgn_pw)
+    touch_url(feed_url, URL_CGI_CALIB2, feed_proxy, feed_lgn_name, feed_lgn_pw)
+    touch_url(feed_url, URL_CGI_CALIB, feed_proxy, feed_lgn_name,
+feed_lgn_pw)
     current_x, current_y, step_x, step_y = load_xy_step_xy(feed)
     save_xy_step_xy(feed, 0, 0, step_x, step_y)
 
@@ -247,27 +225,15 @@ feed_lgn_pw):
     start=feed_url.find('/videostream.cgi')
     if start != -1:
         base_url = feed_url.split('/videostream.cgi')[0]
-    #logger.log('touch_url() - 1:%s2:%s' % (base_url, cgi_url), 'INFO'
-    #/camera_control.cgi?param=0&value=8
+
     # add user name and password if supplied
-    #url_prot, url_body = base_url[:7], base_url[7:]
-    #if  feed_lgn_name != '' and feed_lgn_pw != '':
-    #    url_prot += '%s:%s@' % (feed_lgn_name, feed_lgn_pw)
-    #url_prot = ''
-    #url_body = ''
-    #base_url = '%s%s' % (url_prot, url_body)
-    cgi_url += '&user=%s&pwd=%s&rate=3' % (feed_lgn_name, feed_lgn_pw)
+    url_prot, url_body = base_url[:7], base_url[7:]
+    if  feed_lgn_name != '' and feed_lgn_pw != '':
+        url_prot += '%s:%s@' % (feed_lgn_name, feed_lgn_pw)
+    base_url = '%s%s' % (url_prot, url_body)
 
     logger.log('touch_url() - %s%s' % (base_url, cgi_url), 'DEBUG')
-    #/camera_control.cgi?param=0&value=8&user=shizuma&pwd=03933&rate=3
-    #f_obj = urllib.urlopen('%s%s' % (base_url, cgi_url))
-    theurl = '%s%s' % (base_url, cgi_url)
-    passman = urllib2.HTTPPasswordMgrWithDefaultRealm()
-    passman.add_password(None, theurl, feed_lgn_name, feed_lgn_pw)
-    authhandler = urllib2.HTTPBasicAuthHandler(passman)
-    opener = urllib2.build_opener(authhandler)
-    urllib2.install_opener(opener)
-    f_obj = urllib2.urlopen(theurl)
+    f_obj = urllib.urlopen('%s%s' % (base_url, cgi_url))
 
     time.sleep(0.5)
     f_obj.close()

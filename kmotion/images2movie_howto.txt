@@ -1,0 +1,5 @@
+ffmpeg -r 4 -f image2 -pattern_type glob -i '0*/*.jpg' /tmp/tst.avi
+ffmpeg -r 4 -f image2 -pattern_type glob -i '06/smovie/1*/*.jpg' cam6.avi
+
+ 
+ 

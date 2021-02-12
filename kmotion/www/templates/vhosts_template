@@ -1,5 +1,4 @@
 Listen %port%
-NameVirtualHost *:%port%
 # http://httpd.apache.org/docs/2.0/misc/security_tips.html
 
 <VirtualHost *:%port%>
@@ -11,8 +10,9 @@ NameVirtualHost *:%port%
     #UserDir disabled root 
     
     <Directory />
-    Order Deny,Allow
-    Deny from All
+    #Order Deny,Allow
+    #Deny from All
+    Require all denied
     </Directory>
 
     <Directory %www_dir%>
@@ -22,8 +22,7 @@ NameVirtualHost *:%port%
         Require valid-user
 	
         AllowOverride None
-        Order allow,deny
-        allow from all
+        Require all granted
     </Directory>
     
     <Directory %cgi_bin_dir%>
@@ -40,9 +39,10 @@ NameVirtualHost *:%port%
         %LDAP_block%
         Require valid-user
 	
-        AllowOverride None
-        Order allow,deny
-        allow from all
+        AllowOverride All
+        #Order allow,deny
+        #allow from all
+        Require all granted
     </Directory>
 
     Alias /kmotion_ramdisk/ %ramdisk_dir%/
@@ -52,9 +52,8 @@ NameVirtualHost *:%port%
         %LDAP_block%
         Require valid-user
 	
-        AllowOverride None
-        Order allow,deny
-        allow from all
+        AllowOverride All
+        Require all granted
     </Directory>
     
     Alias /virtual_ramdisk/ %ramdisk_dir%/
@@ -64,15 +63,15 @@ NameVirtualHost *:%port%
         %LDAP_block%
         Require valid-user
 	
-        AllowOverride None
-        Order allow,deny
-        allow from all
+        AllowOverride All
+        Require all granted
     </Directory>
-
+    
     # Possible values include: debug, info, notice, warn, error, crit,
-    LogLevel warn
+    #LogLevel warn
+    LogLevel error
 
     ErrorLog %logs_dir%/error_kmotion.log
-    #CustomLog %logs_dir%/access_kmotion.log combined
+    CustomLog %logs_dir%/access_kmotion.log combined
     
 </VirtualHost>

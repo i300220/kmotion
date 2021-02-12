@@ -64,7 +64,7 @@ def main():
     fna ... feed name
     fbo ... feed show box
     ffp ... feed fps
-    fqu ... feed quality
+    fqu ... feed picture_quality
     fkb ... feed kbs
     fpe ... feed snap enabled
     fsn ... feed snap interval
@@ -208,7 +208,7 @@ def main():
                 parser.set('motion_feed%02i' % index, 'feed_show_box', num_bool(value))
             elif key == 'ffp': # feed fps
                 parser.set('motion_feed%02i' % index, 'feed_fps', value)
-            elif key == 'fqu': # feed quality
+            elif key == 'fqu': # feed picture_quality
                 parser.set('motion_feed%02i' % index, 'feed_quality', value)
             elif key == 'fkb': # feed kbs
                 parser.set('motion_feed%02i' % index, 'feed_kbs', value)

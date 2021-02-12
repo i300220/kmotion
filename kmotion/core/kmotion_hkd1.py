@@ -111,9 +111,10 @@ class Kmotion_Hkd1:
         return  : none
         """
         
-        latest_version = self.get_version()
-        logger.log('parsed latest version : \'%s\'' % latest_version, 'CRIT')
-        self.set_version(latest_version)
+        #latest_version = self.get_version()
+        #logger.log('parsed latest version : \'%s\'' % latest_version, 'CRIT')
+        #self.set_version(latest_version)
+        self.set_version('SVN')
                 
                    
     def set_version(self, version):
