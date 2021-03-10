@@ -184,7 +184,6 @@ def init_ramdisk_dir(kmotion_dir):
     excepts :
     return  : none
     """
-    
     parser = mutex_core_parser_rd(kmotion_dir)
     ramdisk_dir = parser.get('dirs', 'ramdisk_dir')
     

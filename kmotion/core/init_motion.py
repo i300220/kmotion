@@ -44,7 +44,7 @@ def gen_motion_configs(kmotion_dir):
     for del_file in [del_file for del_file in os.listdir('%s/core/motion_conf' % kmotion_dir) 
                   if os.path.isfile('%s/core/motion_conf/%s' % (kmotion_dir, del_file))]:
         os.remove('%s/core/motion_conf/%s' % (kmotion_dir, del_file))
-            
+	
     parser = ConfigParser.SafeConfigParser()
     parser.read('%s/kmotion_rc' % kmotion_dir)
     images_dbase_dir = parser.get('dirs', 'images_dbase_dir')     

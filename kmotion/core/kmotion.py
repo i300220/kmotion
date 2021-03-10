@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-
 # Copyright 2008 David Selby dave6502@googlemail.com
 
 # This file is part of kmotion.

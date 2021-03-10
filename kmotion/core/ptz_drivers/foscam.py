@@ -173,7 +173,7 @@ feed_y), 'DEBUG')
     if feed == 5:
         touch_url(feed_url, URL_CGI_IO_OFF, feed_proxy, feed_lgn_name, feed_lgn_pw)
 # uncomment to speed up motors
-#    touch_url(feed_url, URL_CGI_CALIB2, feed_proxy, feed_lgn_name, feed_lgn_pw)
+    #touch_url(feed_url, URL_CGI_CALIB2, feed_proxy, feed_lgn_name, feed_lgn_pw)
 # disabled 20140315 to avoid reset to right-down position
     #touch_url(feed_url, URL_CGI_CALIB, feed_proxy, feed_lgn_name, feed_lgn_pw)
     current_x, current_y, step_x, step_y = load_xy_step_xy(feed)
