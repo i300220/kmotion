@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 # Copyright 2008 David Selby dave6502@googlemail.com
 
@@ -21,7 +21,7 @@
 The auto installer
 """
 
-import os, sys, pwd, grp, time, stat, ConfigParser, shutil
+import os, sys, pwd, grp, time, stat, configparser, shutil
 from subprocess import * # breaking habit of a lifetime !
 import core.init_core   as init_core
 import core.daemon_whip as daemon_whip
@@ -119,17 +119,17 @@ def install():
     
     # ##########################################################################
     
-    print DEP_TEXT,
-    raw_ip = raw_input()
+    print(DEP_TEXT, end=' ')
+    raw_ip = input()
     if raw_ip != '' and raw_ip != 'yes':
         raise exit_('Please satisfy the above dependencies')
     
     # ##########################################################################
     
-    print INSTALL_TEXT,
-    if raw_input() != 'install':
+    print(INSTALL_TEXT, end=' ')
+    if input() != 'install':
         raise exit_('Install aborted')
-    print LINE_TEXT
+    print(LINE_TEXT)
 
     # ##########################################################################
     
@@ -166,7 +166,7 @@ def install():
     # select a user to run the kmotion service
     checking('Searching for possible users to run kmotion service')
     ok()
-    print SELECT_USER,
+    print(SELECT_USER, end=' ')
     users_uid = [[i[0], i[2], i[3]] for i in pwd.getpwall() if i[2] >= 500 or i[2] == 0]
     
     users = [i[0] for i in users_uid if i[0] != 'root' and i[0] != 'nobody']
@@ -174,9 +174,9 @@ def install():
     gid =   [i[2] for i in users_uid if i[0] != 'root' and i[0] != 'nobody']
     
     for user in users:
-        print '\'%s\'' % user,
-    print '\n\nType \'user\' to continue :',
-    select = raw_input()
+        print('\'%s\'' % user, end=' ')
+    print('\n\nType \'user\' to continue :', end=' ')
+    select = input()
     
     if select not in users:
         raise exit_('Invalid user selected, Install aborted')
@@ -213,7 +213,7 @@ def install():
     checking('Initialise resource configurations')
     try: # wrapping in a try - except because parsing data from kmotion_rc
         init_core.init_rcs(kmotion_dir, ramdisk_dir)
-    except (ConfigParser.NoSectionError, ConfigParser.NoOptionError):
+    except (configparser.NoSectionError, configparser.NoOptionError):
         fail()
         raise exit_('Corrupt \'kmotion_rc\' : %s' % sys.exc_info()[1])
     ok()
@@ -224,7 +224,7 @@ def install():
     checking('Generating kmotion vhost')
     try: # wrapping in a try - except because parsing data from kmotion_rc
         init_core.gen_vhost(kmotion_dir)
-    except (ConfigParser.NoSectionError, ConfigParser.NoOptionError):
+    except (configparser.NoSectionError, configparser.NoOptionError):
         fail()
         raise exit_('Corrupt \'kmotion_rc\' : %s' % sys.exc_info()[1])
     
@@ -239,7 +239,7 @@ def install():
     checking('Adding kmotion include to \'apache2.conf\'')
     try:
         modify_apache2(kmotion_dir)
-    except exit_, text_:
+    except exit_ as text_:
         fail()
         raise exit_(text_)
     ok()
@@ -279,7 +279,7 @@ def install():
     checking('Moving executables to \'bin\' directories')
     try:
         exe_path = move_exes(kmotion_dir)
-    except exit_, text_:
+    except exit_ as text_:
         fail()
         raise exit_(text_)
     ok()
@@ -311,7 +311,7 @@ def install():
     # ##########################################################################
     
     # kmotion not running, no need for mutex
-    parser = ConfigParser.SafeConfigParser()
+    parser = configparser.SafeConfigParser()
     parser.read('%s/kmotion_rc' % kmotion_dir)
     ldap = parser.get('LDAP', 'enabled')
     images_dbase_dir = parser.get('dirs', 'images_dbase_dir')
@@ -326,8 +326,8 @@ def install():
     
     # ##########################################################################
     
-    print FOOTER_TEXT % (port, images_dbase_dir, images_dbase_limit_gb, ldap, port, port),
-    print LINE_TEXT
+    print(FOOTER_TEXT % (port, images_dbase_dir, images_dbase_limit_gb, ldap, port, port), end=' ')
+    print(LINE_TEXT)
 
 
 def check_motion(kmotion_dir):
@@ -566,7 +566,7 @@ def checking(text_):
     return  : none
     """
     
-    print text_, '.' *  (68 - len(text_)) ,
+    print(text_, '.' *  (68 - len(text_)), end=' ')
 
 
 def ok():
@@ -578,7 +578,7 @@ def ok():
     return  : none
     """
     
-    print '[ OK ]'
+    print('[ OK ]')
 
 
 def fail():
@@ -590,10 +590,10 @@ def fail():
     return  : none
     """
     
-    print '[FAIL]'
+    print('[FAIL]')
 
 
 try:
     install()
-except exit_, text:
-    print '\n%s\n' % text
+except exit_ as text:
+    print('\n%s\n' % text)

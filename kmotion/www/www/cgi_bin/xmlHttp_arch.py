@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 # Copyright 2008 David Selby dave6502@googlemail.com
 
@@ -21,9 +21,13 @@
 Returns the archive data index's
 """
 
-import ConfigParser, os, time, random, os.path, datetime
+import configparser, os, time, random, os.path, datetime
+#from mod_python import apache
 
-
+# enable debugging
+#import cgitb
+#cgitb.enable()
+    
 def index(req):
     """
     Returns a coded string containing 'images_dbase' indexes for the archive 
@@ -50,30 +54,49 @@ def index(req):
     # python executed within python-mod has an undefined cwd
     file_path = str(req.__getattribute__('filename'))
     kmotion_dir = os.path.abspath('%s/../../../..' % file_path)
-    parser = ConfigParser.SafeConfigParser()
+    parser = configparser.ConfigParser()
+
+    #date_ = req.form.getfirst('date')
+    #feed = int(req.form.getfirst('cam'))
+    #func = req.form.getfirst('func')
     
+
     try:
         mutex_acquire(kmotion_dir)
         parser.read('%s/www/www_rc' % kmotion_dir)
     finally:
         mutex_release(kmotion_dir)
     
+    i = int(0)
+    for key, val in req.form.items():
+        i = i + 1
+        if key == '':
+            i = i + 1
+        else:
+            if val == '':
+                i = i + 1
+            else:
+                if key == 'date':
+            	    date_ = val
+                if i == 3:
+            	    feed = int(val)
+                if key == 'func':
+            	    func = val
+                i = i + 1
+
     images_dbase_dir = parser.get('system', 'images_dbase_dir')
     
-    date_ = req.form['date']
-    feed =  int(req.form['cam'])
-    func =  req.form['func']
     
     coded_str = '' # in case of corrupted value, return zip
     
-    if func == 'avail':   # date_s avaliable
+    if func == b'avail':   # date_s avaliable
         coded_str = date_feed_avail_data(images_dbase_dir)
         
-    elif func == 'index': # movies and snapshots
-        fps_time, fps = fps_journal_data(images_dbase_dir, date_, feed)
-        coded_str = movie_journal_data(images_dbase_dir, date_, feed, fps_time, fps) + '@'
-        coded_str += smovie_journal_data(images_dbase_dir, date_, feed, fps_time, fps) + '@' 
-        coded_str += snap_journal_data(images_dbase_dir, date_, feed)
+    elif func == b'index': # movies and snapshots
+        fps_time, fps = fps_journal_data(images_dbase_dir, date_.decode(), feed)
+        coded_str = movie_journal_data(images_dbase_dir, date_.decode(), feed, fps_time, fps) + '@'
+        coded_str += smovie_journal_data(images_dbase_dir, date_.decode(), feed, fps_time, fps) + '@' 
+        coded_str += snap_journal_data(images_dbase_dir, date_.decode(), feed)
         
     coded_str += '$chk:%08i' % len(coded_str)
     return coded_str
@@ -376,7 +399,7 @@ def mutex_acquire(kmotion_dir):
         
         # add our lock
         f_obj = open('%s/www/mutex/www_rc/%s' % (kmotion_dir, os.getpid()), 'w')
-        print >> f_obj, ''
+        print('', file=f_obj)
         f_obj.close()
             
         # wait ... see if another lock has appeared, if so remove our lock
@@ -386,7 +409,8 @@ def mutex_acquire(kmotion_dir):
             break
         os.remove('%s/www/mutex/www_rc/%s' % (kmotion_dir, os.getpid()))
         # random to avoid mexican stand-offs
-        time.sleep(float(random.randint(01, 40)) / 1000)
+        #time.sleep(float(random.randint(1, 40)) / 1000)
+        time.sleep(0.1)
             
         
 def mutex_release(kmotion_dir):
@@ -434,23 +458,8 @@ if __name__ == '__main__':
             self.filename = '../null/null'
             self.form = {'date': time.strftime('%Y%m%d'), 'cam': 1, 'func': 'index'}
 
-    print '\nModule self test ... \'avail\' ...\n'
-    print index(Test_Class1())
+    print('\nModule self test ... \'avail\' ...\n')
+    print(index(Test_Class1()))
 
-    print '\nModule self test ... \'index\' ...\n'
-    print index(Test_Class2())
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    print('\nModule self test ... \'index\' ...\n')
+    print(index(Test_Class2()))

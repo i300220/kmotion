@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 # Copyright 2008 David Selby dave6502@googlemail.com
 
@@ -15,13 +15,13 @@
 # GNU General Public License for more details.
 
 # You should have received a copy of the GNU General Public License
-# along with kmotion.  If not, see <http://www.gnu.org/licenses/>.
+# along with kmotion.  If not, see .
 
 """
 This script generates a kmotion v2.xx package.
 """
 
-import os, sys, shutil, subprocess, ConfigParser, shutil
+import os, sys, shutil, subprocess, configparser, shutil
 
 
 def main():
@@ -33,7 +33,7 @@ def main():
     return  : 
     """
     
-    print """
+    print("""
 ****************************************************************************
 
 Welcome to the kmotion v2 automatic packaging script. If this upgrade fails 
@@ -46,13 +46,13 @@ This script generates a kmotion v2.xx package. *IMPORTANT* Check you have
 updated the version strings in core_rc and www/templates/www_rc before 
 running this script !
 
-Do you want to continue (yes/no) ? (default yes) :""",
+Do you want to continue (yes/no) ? (default yes) :""", end=' ')
     
-    user_ip = raw_input()
+    user_ip = input()
     
-    print """
+    print("""
 ****************************************************************************
-"""
+""")
     if not (user_ip == 'yes' or user_ip == ''):
         sys.exit()
         
@@ -89,7 +89,7 @@ Do you want to continue (yes/no) ? (default yes) :""",
     shutil.copy('/tmp/kmotion_make_pkg/kmotion/www/templates/www_rc', '/tmp/kmotion_make_pkg/kmotion/www/www_rc')  
     ok()
     
-    parser = ConfigParser.SafeConfigParser()
+    parser = configparser.ConfigParser()
     parser.read('/tmp/kmotion_make_pkg/kmotion/core/core_rc') 
     vers = parser.get('version', 'string')
         
@@ -118,7 +118,7 @@ def checking(text_):
     return  : none
     """
     
-    print text_, '.' *  (68 - len(text_)) ,
+    print(text_, '.' *  (68 - len(text_)), end=' ')
 
 
 def ok():
@@ -130,7 +130,7 @@ def ok():
     return  : none
     """
     
-    print '[ OK ]'
+    print('[ OK ]')
 
 
 def fail():
@@ -142,16 +142,10 @@ def fail():
     return  : none
     """
     
-    print '[FAIL]'
+    print('[FAIL]')
 
 
     
 if __name__ == '__main__':
     main()
-
-
-
-
-
-
-
+    

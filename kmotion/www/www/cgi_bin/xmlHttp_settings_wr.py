@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 # Copyright 2008 David Selby dave6502@googlemail.com
 
@@ -44,7 +44,7 @@ def index(req):
 
 # Module self test
 if __name__ == '__main__':
-    print '\nNo self test avaliable ...\n'
+    print('\nNo self test avaliable ...\n')
 
 
 

@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 # Copyright 2008 David Selby dave6502googlemail.com
 
@@ -21,7 +21,7 @@
 Resets the config password to 'kmotion'
 """
 
-import os, ConfigParser
+import os, configparser
 import core.mutex as mutex
 
 class exit_(Exception): pass
@@ -58,12 +58,12 @@ def reset():
     return  : none
     """
     
-    print RESET_TEXT,
-    raw_ip = raw_input()
+    print(RESET_TEXT, end=' ')
+    raw_ip = input()
     if raw_ip != 'reset':
         raise exit_('Reset aborted')
         
-    print LINE_TEXT
+    print(LINE_TEXT)
          
     # check we are not running as root
     checking('Checking reset is running as a normal user')
@@ -96,8 +96,8 @@ def reset():
     mutex_www_parser_wr(kmotion_dir, parser)
     ok()
 
-    print FOOTER_TEXT
-    print LINE_TEXT
+    print(FOOTER_TEXT)
+    print(LINE_TEXT)
 
      
 def mutex_www_parser_rd(kmotion_dir):
@@ -110,7 +110,7 @@ def mutex_www_parser_rd(kmotion_dir):
     return  : parser ... a parser instance
     """
     
-    parser = ConfigParser.SafeConfigParser()
+    parser = configparser.SafeConfigParser()
     try:
         mutex.acquire(kmotion_dir, 'www_rc')
         parser.read('%s/www/www_rc' % kmotion_dir)
@@ -147,7 +147,7 @@ def checking(text_):
     return  : none
     """
     
-    print text_, '.' *  (68 - len(text_)) ,
+    print(text_, '.' *  (68 - len(text_)), end=' ')
 
 
 def ok():
@@ -159,7 +159,7 @@ def ok():
     return  : none
     """
     
-    print '[ OK ]'
+    print('[ OK ]')
 
 
 def fail():
@@ -171,12 +171,12 @@ def fail():
     return  : none
     """
     
-    print '[FAIL]'
+    print('[FAIL]')
 
     
 try:
     reset()
-except exit_, text:
-    print '\n%s\n' % text
+except exit_ as text:
+    print('\n%s\n' % text)
     
     

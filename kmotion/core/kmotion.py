@@ -1,4 +1,5 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
+
 # Copyright 2008 David Selby dave6502@googlemail.com
 
 # This file is part of kmotion.
@@ -24,12 +25,17 @@ The kmotion exe file cannot call this code directly because it may be in a
 different working directory
 """
 
-import os, sys, time, ConfigParser
+import os, sys, time, configparser
 from subprocess import * # breaking habit of a lifetime !
-import init_core, init_motion, daemon_whip, logger
+sys.path.append('.')
+import init_core
+import init_motion 
+import daemon_whip 
+import logger 
 import mutex
 
-log_level = 'WARNING' 
+#log_level = 'WARNING' 
+log_level = 'DEBUG' 
 logger = logger.Logger('kmotion', log_level)
 
 class exit_(Exception): pass
@@ -61,8 +67,7 @@ def main():
     
     # check for any invalid motion processes
     p_objs = Popen('ps ax | grep -e [[:space:]]motion | grep -v \'\-c %s/core/motion_conf/motion.conf\'' % kmotion_dir, shell=True, stdin=PIPE, stdout=PIPE, stderr=PIPE, close_fds=True)
-    line = p_objs.stdout.readline()
-    
+    line = p_objs.stdout.readline().decode()
     if line != '':
         logger.log('** CRITICAL ERROR ** kmotion failed to start ...', 'CRIT')
         logger.log('** CRITICAL ERROR ** Another instance of motion daemon has been detected', 'CRIT')
@@ -84,12 +89,12 @@ Reference Bug #235599.""")
     
     try: # wrapping in a try - except because parsing data from kmotion_rc
         init_core.update_rcs(kmotion_dir, ramdisk_dir)
-    except (ConfigParser.NoSectionError, ConfigParser.NoOptionError):
+    except (configparser.NoSectionError, configparser.NoOptionError):
         raise exit_('corrupt \'kmotion_rc\' : %s' % sys.exc_info()[1])
     
     try: # wrapping in a try - except because parsing data from kmotion_rc
         init_core.gen_vhost(kmotion_dir)
-    except (ConfigParser.NoSectionError, ConfigParser.NoOptionError):
+    except (configparser.NoSectionError, configparser.NoOptionError):
         raise exit_('corrupt \'kmotion_rc\' : %s' % sys.exc_info()[1])
 
     # init motion_conf directory with motion.conf, thread1.conf ...
@@ -104,13 +109,18 @@ Reference Bug #235599.""")
         daemon_whip.start_daemons()
         daemon_whip.reload_all_configs()
           
-    time.sleep(1) # purge all fifo buffers, FIFO bug workaround :)
-    purge_str = '#' * 1000 + '99999999'
-    for fifo in ['fifo_func', 'fifo_ptz', 'fifo_ptz_preset', 'fifo_settings_wr']:
-        
-        pipeout = os.open('%s/www/%s' % (kmotion_dir, fifo), os.O_WRONLY)
-        os.write(pipeout, purge_str)
-        os.close(pipeout)
+    #breakpoint()        
+    #time.sleep(1) # purge all fifo buffers, FIFO bug workaround :)
+    #purge_str = '#' * 1000 + '99999999'
+    #purge_str = purge_str.encode()
+    #for fifo in ['fifo_func', 'fifo_ptz', 'fifo_ptz_preset', 'fifo_settings_wr']:
+
+        #pipeout = os.open('%s/www/%s' % (kmotion_dir, fifo), os.O_WRONLY)
+        #os.write(pipeout, purge_str)
+        #os.close(pipeout)
+        #pipeout = open('%s/www/%s' % (kmotion_dir, fifo), 'w+')
+        #pipeout.write(purge_str)
+        #pipeout.close
             
             
 def mutex_core_parser_rd(kmotion_dir):
@@ -123,7 +133,7 @@ def mutex_core_parser_rd(kmotion_dir):
     return  : parser ... a parser instance
     """
     
-    parser = ConfigParser.SafeConfigParser()
+    parser = configparser.ConfigParser()
     try:
         mutex.acquire(kmotion_dir, 'core_rc')
         parser.read('%s/core/core_rc' % kmotion_dir)

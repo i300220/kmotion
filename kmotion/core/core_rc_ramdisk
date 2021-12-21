@@ -6,3 +6,4 @@ string = 2.19 Beta
 
 [workaround]
 motion_reload_bug = True
+

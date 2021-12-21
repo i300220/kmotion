@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 # Copyright 2008 David Selby dave6502googlemail.com
 
@@ -21,7 +21,7 @@
 Upgrade kmotion to the latest version
 """
 
-import os, sys, time, urllib, shutil, ConfigParser, stat
+import os, sys, time, urllib.request, urllib.parse, urllib.error, shutil, configparser, stat
 from subprocess import * # breaking habit of a lifetime !
 
 import core.mutex       as mutex
@@ -91,12 +91,12 @@ def upgrade():
     """
     
 
-    print RESET_TEXT,
-    raw_ip = raw_input()
+    print(RESET_TEXT, end=' ')
+    raw_ip = input()
     if raw_ip != 'upgrade':
         raise exit_('Upgrade aborted')
     
-    print LINE_TEXT
+    print(LINE_TEXT)
          
     # ##########################################################################
     
@@ -207,7 +207,7 @@ def upgrade():
         checking('Initialise resource configurations')
         try: # wrapping in a try - except because parsing data from kmotion_rc
             init_core.update_rcs(kmotion_dir, ramdisk_dir)
-        except (ConfigParser.NoSectionError, ConfigParser.NoOptionError):
+        except (configparser.NoSectionError, configparser.NoOptionError):
             fail()
             raise exit_('Corrupt \'kmotion_rc\' : %s' % sys.exc_info()[1])
         ok()
@@ -226,19 +226,19 @@ def upgrade():
         if not restart_apache2():
             checking('Restarted apache2')
             fail()
-            print APACHE_UPGRADED_TEXT
+            print(APACHE_UPGRADED_TEXT)
 
         else:
             checking('Restarted apache2')
             ok()
-            print UPGRADED_TEXT
+            print(UPGRADED_TEXT)
             
-        print LINE_TEXT
+        print(LINE_TEXT)
 
     else:
         
-        print NOT_UPGRADED_TEXT
-        print LINE_TEXT
+        print(NOT_UPGRADED_TEXT)
+        print(LINE_TEXT)
 
 
 
@@ -255,7 +255,7 @@ def get_latest_version(current_ver):
     
     url = 'http://code.google.com/p/kmotion-v2-code/downloads/list'
         
-    opener = urllib.FancyURLopener()
+    opener = urllib.request.FancyURLopener()
     try: # read the webpage
         f_obj = opener.open(url)
         html = f_obj.read()
@@ -295,7 +295,7 @@ def download_version(version):
     # download version
     url = 'http://kmotion-v2-code.googlecode.com/files/kmotion_' + version.replace(' ', '_') + '.tar.gz'
         
-    opener = urllib.FancyURLopener()
+    opener = urllib.request.FancyURLopener()
     try: 
         f_obj = opener.open(url)
         gzip_file = f_obj.read()
@@ -418,7 +418,7 @@ def mutex_core_parser_rd(kmotion_dir):
     return  : parser ... a parser instance
     """
     
-    parser = ConfigParser.SafeConfigParser()
+    parser = configparser.SafeConfigParser()
     try:
         mutex.acquire(kmotion_dir, 'core_rc')
         parser.read('%s/core/core_rc' % kmotion_dir)
@@ -455,7 +455,7 @@ def checking(text_):
     return  : none
     """
     
-    print text_, '.' *  (68 - len(text_)) ,
+    print(text_, '.' *  (68 - len(text_)), end=' ')
 
 
 def ok():
@@ -467,7 +467,7 @@ def ok():
     return  : none
     """
     
-    print '[ OK ]'
+    print('[ OK ]')
 
 
 def fail():
@@ -479,12 +479,12 @@ def fail():
     return  : none
     """
     
-    print '[FAIL]'
+    print('[FAIL]')
 
     
 try:
     upgrade()
-except exit_, text:
-    print '\n%s\n' % text
+except exit_ as text:
+    print('\n%s\n' % text)
     
     

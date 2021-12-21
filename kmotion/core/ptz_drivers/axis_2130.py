@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 # Copyright 2008 David Selby dave6502@googlemail.com
 
@@ -21,7 +21,7 @@
 PT(Z) driver for axis 2130 network camera
 """
 
-import os, urllib, cPickle, time
+import os, urllib.request, urllib.parse, urllib.error, pickle, time
 import logger
 
 log_level = 'WARNING'
@@ -150,13 +150,13 @@ def set_xy(orig_x, orig_y, new_x, new_y, feed_url, feed_proxy, feed_lgn_name, fe
     
     url = '%s%s' % (url_prot, url_body)
     
-    f_obj = urllib.urlopen('%s%s?%s,10' % (url, URL_CGI_X, new_x))
+    f_obj = urllib.request.urlopen('%s%s?%s,10' % (url, URL_CGI_X, new_x))
     time.sleep((abs(new_x - orig_x) / float(MAX_X - MIN_X)) * X_TIME)
     f_obj.close()
     
     time.sleep(0.5)
     
-    f_obj = urllib.urlopen('%s%s?10,%s' % (url, URL_CGI_Y, new_y))
+    f_obj = urllib.request.urlopen('%s%s?10,%s' % (url, URL_CGI_Y, new_y))
     time.sleep((abs(new_y - orig_y) / float(MAX_Y - MIN_Y)) * Y_TIME)
     f_obj.close()
 
@@ -171,7 +171,7 @@ def save_xy(x, y, feed):
     """
     
     f_obj = open('ptz_drivers/abs_xy/%02ixy' % feed, 'w')
-    cPickle.dump([x, y], f_obj)
+    pickle.dump([x, y], f_obj)
     f_obj.close()
     
     
@@ -187,7 +187,7 @@ def load_xy(feed):
     
     if os.path.isfile('ptz_drivers/abs_xy/%02ixy' % feed):
         f_obj = open('ptz_drivers/abs_xy/%02ixy' % feed)
-        data = cPickle.load(f_obj)
+        data = pickle.load(f_obj)
         f_obj.close()
     else:
         data = [(MAX_X - MIN_X)/2, (MAX_Y - MIN_Y)/2]

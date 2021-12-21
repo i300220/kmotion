@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 # Copyright 2008 David Selby dave6502@googlemail.com
 
@@ -21,12 +21,14 @@
 Waits on the 'fifo_ptz' fifo until data received
 """
 
-import sys, threading, subprocess, time, os.path, urllib, time, signal, ConfigParser, traceback
+import sys, threading, subprocess, time, os.path, urllib.request, urllib.parse, urllib.error, time, signal, configparser, traceback
+sys.path.append('.')
 import logger, mutex
-import ptz_drivers.axis_2130 as axis_2130
-import ptz_drivers.axis_213 as axis_213
-import ptz_drivers.panasonic as panasonic
-import ptz_drivers.foscam as foscam
+sys.path.append('./ptz_drivers')
+import axis_2130
+import axis_213
+import panasonic
+import foscam
 
 
 log_level = 'WARNING'
@@ -81,7 +83,7 @@ def read_config():
 
     try:
         mutex.acquire(kmotion_dir, 'www_rc')   
-        parser = ConfigParser.SafeConfigParser()
+        parser = configparser.ConfigParser()
         parser.read('../www/www_rc') 
     finally:
         mutex.release(kmotion_dir, 'www_rc')
@@ -164,7 +166,7 @@ class Servo_Control:
         driver = ptz_track_type[feed]
         if driver < 9: # use motion to move cameras
             try:
-                obj = urllib.urlopen('http://localhost:8080/%s/track/set?pan=%s&tilt=%s' % (feed, x, y))
+                obj = urllib.request.urlopen('http://localhost:8080/%s/track/set?pan=%s&tilt=%s' % (feed, x, y))
                 obj.readlines()
                 obj.close()
             except IOError:
@@ -196,7 +198,7 @@ class Servo_Control:
         driver = ptz_track_type[feed]
         if driver < 9: # use motion to move cameras
             try:
-                obj = urllib.urlopen('http://localhost:8080/%s/track/set?x=%s&y=%s' % (feed, x, y))
+                obj = urllib.request.urlopen('http://localhost:8080/%s/track/set?x=%s&y=%s' % (feed, x, y))
                 obj.readlines()
                 obj.close()
             except IOError:
@@ -290,7 +292,7 @@ class Thread1_PTZ(Servo_Control, threading.Thread):
 
                 logger.log('waiting on FIFO pipe data', 'DEBUG')
                 data = subprocess.Popen(['cat', '%s/www/fifo_ptz' % kmotion_dir], stdout=subprocess.PIPE).communicate()[0]
-                data = data.rstrip()
+                data = data.rstrip().decode()
                 logger.log('FIFO pipe data: %s' % data, 'DEBUG')
                 
                 if len(data) < 8:
@@ -302,7 +304,7 @@ class Thread1_PTZ(Servo_Control, threading.Thread):
                 
                 # if no enabled feeds, still open 'pipein' to avoid lockup on
                 # far end of pipe.
-                if enabled_list == []: continue
+                if str(enabled_list) == []: continue
                 
                 # check for coded format 'caf<feed 2 digit + 5000>x<4 digits>y<4 digits + 5000>$' 
                 # camera absolute

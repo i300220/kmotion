@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 # Copyright 2008 David Selby dave6502@googlemail.com
 
@@ -22,7 +22,8 @@ Delete the appropreate file in 'ramdisk_dir/events' and execute the
 appropreate script in 'event' if it exists.
 """
 
-import os, sys, ConfigParser
+import os, sys, configparser
+sys.path.append('.')
 import logger, mutex
 
 log_level = 'WARNING'
@@ -39,7 +40,7 @@ def main():
     
     try:
         mutex.acquire(kmotion_dir, 'core_rc')   
-        parser = ConfigParser.SafeConfigParser()
+        parser = configparser.ConfigParser()
         parser.read('./core_rc') 
     finally:
         mutex.release(kmotion_dir, 'core_rc')

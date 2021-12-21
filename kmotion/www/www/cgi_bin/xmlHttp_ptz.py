@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 # Copyright 2008 David Selby dave6502@googlemail.com
 
@@ -49,7 +49,7 @@ class Test_Class(object):
         self.form = {'val': 'crf01b01$'}
     
 if __name__ == '__main__':
-    print '\nModule self test ... adding \'crf01b01$\' to fifo_ptz\n'
+    print('\nModule self test ... adding \'crf01b01$\' to fifo_ptz\n')
     index(Test_Class())
 
 

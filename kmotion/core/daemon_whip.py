@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 # Copyright 2008 David Selby dave6502@googlemail.com
 
@@ -22,8 +22,9 @@ Controls kmotion daemons allowing daemon starting, stopping, checking of status
 and config reloading
 """
 
-import time, os, ConfigParser
+import time, os, configparser, sys
 from subprocess import * # breaking habit of a lifetime !
+sys.path.append('.')
 import logger, init_core, mutex
 
 log_level = 'WARNING'
@@ -41,29 +42,28 @@ def start_daemons():
     
     logger.log('start_daemons() - starting daemons ...', 'DEBUG')
     kmotion_dir = load_rc()[0]
-    
     p_objs = Popen('ps ax | grep kmotion_hkd1.py$', shell=True, stdin=PIPE, stdout=PIPE, stderr=PIPE, close_fds=True)
-    if p_objs.stdout.readline() == '':   
+    if p_objs.stdout.readline().decode() == '':   
         Popen('nohup %s/core/kmotion_hkd1.py >/dev/null 2>&1 &' % kmotion_dir, shell=True) 
         logger.log('start_daemons() - starting kmotion_hkd1', 'DEBUG')
 
     p_objs = Popen('ps ax | grep kmotion_hkd2.py$', shell=True, stdin=PIPE, stdout=PIPE, stderr=PIPE, close_fds=True)
-    if p_objs.stdout.readline() == '':   
+    if p_objs.stdout.readline().decode() == '':   
         Popen('nohup %s/core/kmotion_hkd2.py >/dev/null 2>&1 &' % kmotion_dir, shell=True)
         logger.log('start_daemons() - starting kmotion_hkd2', 'DEBUG')
 
     p_objs = Popen('ps ax | grep kmotion_fund.py$', shell=True, stdin=PIPE, stdout=PIPE, stderr=PIPE, close_fds=True)
-    if p_objs.stdout.readline() == '':   
+    if p_objs.stdout.readline().decode() == '':   
         Popen('nohup %s/core/kmotion_fund.py >/dev/null 2>&1 &' % kmotion_dir, shell=True)
         logger.log('start_daemons() - starting kmotion_fund', 'DEBUG')
         
     p_objs = Popen('ps ax | grep kmotion_setd.py$', shell=True, stdin=PIPE, stdout=PIPE, stderr=PIPE, close_fds=True)
-    if p_objs.stdout.readline() == '':  
+    if p_objs.stdout.readline().decode() == '':  
         Popen('nohup %s/core/kmotion_setd.py >/dev/null 2>&1 &' % kmotion_dir, shell=True)
         logger.log('start_daemons() - starting kmotion_setd', 'DEBUG')
         
     p_objs = Popen('ps ax | grep kmotion_ptzd.py$', shell=True, stdin=PIPE, stdout=PIPE, stderr=PIPE, close_fds=True)
-    if p_objs.stdout.readline() == '': 
+    if p_objs.stdout.readline().decode() == '': 
         Popen('nohup %s/core/kmotion_ptzd.py >/dev/null 2>&1 &' % kmotion_dir, shell=True)
         logger.log('start_daemons() - starting kmotion_ptzd', 'DEBUG')
     
@@ -71,7 +71,7 @@ def start_daemons():
     if os.path.isfile('%s/core/motion_conf/motion.conf' % kmotion_dir):
             
         p_objs = Popen('/bin/ps ax | /bin/grep [m]otion\ -c', shell=True, stdin=PIPE, stdout=PIPE, stderr=PIPE, close_fds=True)
-        if p_objs.stdout.readline() == '': 
+        if p_objs.stdout.readline().decode() == '': 
             init_core.init_motion_out(kmotion_dir) # clear 'motion_out'
             Popen('nohup motion -c %s/core/motion_conf/motion.conf 2>&1 | grep --line-buffered -v \'saved to\' >> %s/www/motion_out &' % (kmotion_dir, kmotion_dir), shell=True)
             logger.log('start_daemons() - starting motion', 'DEBUG')
@@ -122,22 +122,22 @@ def all_daemons_running():
     """
     
     p_objs = Popen('ps ax | grep kmotion_hkd1.py$', shell=True, stdin=PIPE, stdout=PIPE, stderr=PIPE, close_fds=True)
-    stdout1 = p_objs.stdout.readline()
+    stdout1 = p_objs.stdout.readline().decode()
     
     p_objs = Popen('ps ax | grep kmotion_hkd2.py$', shell=True, stdin=PIPE, stdout=PIPE, stderr=PIPE, close_fds=True)
-    stdout2 = p_objs.stdout.readline()
+    stdout2 = p_objs.stdout.readline().decode()
         
     p_objs = Popen('ps ax | grep kmotion_fund.py$', shell=True, stdin=PIPE, stdout=PIPE, stderr=PIPE, close_fds=True)
-    stdout3 = p_objs.stdout.readline()
+    stdout3 = p_objs.stdout.readline().decode()
     
     p_objs = Popen('ps ax | grep kmotion_setd.py$', shell=True, stdin=PIPE, stdout=PIPE, stderr=PIPE, close_fds=True)
-    stdout4 = p_objs.stdout.readline()
+    stdout4 = p_objs.stdout.readline().decode()
     
     p_objs = Popen('ps ax | grep kmotion_ptzd.py$', shell=True, stdin=PIPE, stdout=PIPE, stderr=PIPE, close_fds=True)
-    stdout5 = p_objs.stdout.readline()
+    stdout5 = p_objs.stdout.readline().decode()
     
     p_objs = Popen('/bin/ps ax | /bin/grep [m]otion\ -c', shell=True, stdin=PIPE, stdout=PIPE, stderr=PIPE, close_fds=True)
-    stdout6 = p_objs.stdout.readline()
+    stdout6 = p_objs.stdout.readline().decode()
     
     return (stdout1 != '' and stdout2 != '' and stdout3 != '' and stdout4 != '' 
             and stdout5 != '' and stdout6 != '')
@@ -153,22 +153,22 @@ def no_daemons_running():
     """
     
     p_objs = Popen('ps ax | grep kmotion_hkd1.py$', shell=True, stdin=PIPE, stdout=PIPE, stderr=PIPE, close_fds=True)
-    stdout1 = p_objs.stdout.readline()
+    stdout1 = p_objs.stdout.readline().decode()
     
     p_objs = Popen('ps ax | grep kmotion_hkd2.py$', shell=True, stdin=PIPE, stdout=PIPE, stderr=PIPE, close_fds=True)
-    stdout2 = p_objs.stdout.readline()
+    stdout2 = p_objs.stdout.readline().decode()
         
     p_objs = Popen('ps ax | grep kmotion_fund.py$', shell=True, stdin=PIPE, stdout=PIPE, stderr=PIPE, close_fds=True)
-    stdout3 = p_objs.stdout.readline()
+    stdout3 = p_objs.stdout.readline().decode()
     
     p_objs = Popen('ps ax | grep kmotion_setd.py$', shell=True, stdin=PIPE, stdout=PIPE, stderr=PIPE, close_fds=True)
-    stdout4 = p_objs.stdout.readline()
+    stdout4 = p_objs.stdout.readline().decode()
     
     p_objs = Popen('ps ax | grep kmotion_ptzd.py$', shell=True, stdin=PIPE, stdout=PIPE, stderr=PIPE, close_fds=True)
-    stdout5 = p_objs.stdout.readline()
+    stdout5 = p_objs.stdout.readline().decode()
     
     p_objs = Popen('/bin/ps ax | /bin/grep [m]otion\ -c', shell=True, stdin=PIPE, stdout=PIPE, stderr=PIPE, close_fds=True)
-    stdout6 = p_objs.stdout.readline()
+    stdout6 = p_objs.stdout.readline().decode()
     
     return (stdout1 == '' and stdout2 == '' and stdout3 == '' and stdout4 == '' 
             and stdout5 == '' and stdout6 == '')
@@ -187,22 +187,22 @@ def daemon_status():
     status = {}
     
     p_objs = Popen('ps ax | grep kmotion_hkd1.py$', shell=True, stdin=PIPE, stdout=PIPE, stderr=PIPE, close_fds=True)
-    status['kmotion_hkd1'] = not (p_objs.stdout.readline() == '')
+    status['kmotion_hkd1'] = not (p_objs.stdout.readline().decode() == '')
 
     p_objs = Popen('ps ax | grep kmotion_hkd2.py$', shell=True, stdin=PIPE, stdout=PIPE, stderr=PIPE, close_fds=True)
-    status['kmotion_hkd2'] = not (p_objs.stdout.readline() == '')
+    status['kmotion_hkd2'] = not (p_objs.stdout.readline().decode() == '')
 
     p_objs = Popen('ps ax | grep kmotion_fund.py$', shell=True, stdin=PIPE, stdout=PIPE, stderr=PIPE, close_fds=True)
-    status['kmotion_fund'] = not (p_objs.stdout.readline() == '')
+    status['kmotion_fund'] = not (p_objs.stdout.readline().decode() == '')
         
     p_objs = Popen('ps ax | grep kmotion_setd.py$', shell=True, stdin=PIPE, stdout=PIPE, stderr=PIPE, close_fds=True)
-    status['kmotion_setd'] = not (p_objs.stdout.readline() == '')
+    status['kmotion_setd'] = not (p_objs.stdout.readline().decode() == '')
         
     p_objs = Popen('ps ax | grep kmotion_ptzd.py$', shell=True, stdin=PIPE, stdout=PIPE, stderr=PIPE, close_fds=True)
-    status['kmotion_ptzd'] = not (p_objs.stdout.readline() == '')
+    status['kmotion_ptzd'] = not (p_objs.stdout.readline().decode() == '')
     
     p_objs = Popen('/bin/ps ax | /bin/grep [m]otion\ -c', shell=True, stdin=PIPE, stdout=PIPE, stderr=PIPE, close_fds=True)
-    status['motion'] = not (p_objs.stdout.readline() == '')
+    status['motion'] = not (p_objs.stdout.readline().decode() == '')
 
     return status
 
@@ -215,7 +215,7 @@ def reload_all_configs():
     excepts : 
     return  : none
     """
-    
+    #breakpoint()    
     reload_ptz_config()
     reload_motion_config()
     # kmotion_fund and kmotion_setd have no SIGHUP handlers
@@ -240,7 +240,7 @@ def reload_ptz_config():
     Popen('pkill -SIGHUP -f python.+kmotion_ptzd.py', shell=True)  
     while True:
         p_objs = Popen('ps ax | grep kmotion_ptzd.py$', shell=True, stdin=PIPE, stdout=PIPE, stderr=PIPE, close_fds=True)
-        stdout = p_objs.stdout.readline()
+        stdout = p_objs.stdout.readline().decode()
         if stdout == '': break
         time.sleep(0.1)
     Popen('nohup %s/core/kmotion_ptzd.py >/dev/null 2>&1 &' % kmotion_dir, shell=True)
@@ -276,7 +276,7 @@ def reload_motion_config():
                 Popen('killall -9 -q motion', shell=True) # if motion hangs get nasty !
             
             p_objs = Popen('/bin/ps ax | /bin/grep [m]otion\ -c', shell=True, stdin=PIPE, stdout=PIPE, stderr=PIPE, close_fds=True)
-            stdout = p_objs.stdout.readline()
+            stdout = p_objs.stdout.readline().decode()
             if stdout == '': break
             
             time.sleep(1)       
@@ -314,7 +314,7 @@ def load_rc():
     kmotion_dir = os.getcwd()[:-5]
     try:
         mutex.acquire(kmotion_dir, 'core_rc')   
-        parser = ConfigParser.SafeConfigParser()
+        parser = configparser.ConfigParser()
         parser.read('./core_rc') 
     finally:
         mutex.release(kmotion_dir, 'core_rc')

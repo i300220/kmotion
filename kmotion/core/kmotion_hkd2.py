@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 # Copyright 2008 David Selby dave6502@googlemail.com
 
@@ -23,7 +23,8 @@ generating a 'sanitized' snap sequence. Also updates journals. On SIGHUP
 force a config re-read.
 """
 
-import os, sys, time, signal, shutil, ConfigParser, traceback
+import os, errno, sys, time, signal, shutil, configparser, traceback
+sys.path.append('.')
 import logger, daemon_whip, mutex
 
 log_level = 'WARNING'
@@ -61,11 +62,11 @@ class Hkd2_Feed:
         """
         
         self.kmotion_dir = os.getcwd()[:-5]
-        parser = ConfigParser.SafeConfigParser()
+        parser = configparser.ConfigParser()
         parser.read('../kmotion_rc')
         try: # try - except because kmotion_rc is user changeable file
             self.images_dbase_dir = parser.get('dirs', 'images_dbase_dir')
-        except (ConfigParser.NoSectionError, ConfigParser.NoOptionError): 
+        except (configparser.NoSectionError, configparser.NoOptionError): 
             logger.log('** CRITICAL ERROR ** corrupt \'kmotion_rc\': %s' % 
                        sys.exc_info()[1], 'CRIT')
             logger.log('** CRITICAL ERROR ** killing all daemons and terminating', 'CRIT')
@@ -301,7 +302,7 @@ class Hkd2_Feed:
         return  : parser ... a parser instance
         """
         
-        parser = ConfigParser.SafeConfigParser()
+        parser = configparser.ConfigParser()
         try:
             mutex.acquire(kmotion_dir, 'www_rc')
             parser.read('%s/www/www_rc' % kmotion_dir)
@@ -320,7 +321,7 @@ class Hkd2_Feed:
         return  : parser ... a parser instance
         """
         
-        parser = ConfigParser.SafeConfigParser()
+        parser = configparser.ConfigParser()
         try:
             mutex.acquire(kmotion_dir, 'core_rc')
             parser.read('%s/core/core_rc' % kmotion_dir)
@@ -389,6 +390,13 @@ class Kmotion_Hkd2:
             for inst in self.instance_list:
                 inst.service_snap()
                 
+#        def make_sure_path_exists('%s/tmp' % ramdisk_dir):
+#            try:
+#                os.makedirs('%s/tmp' % ramdisk_dir)
+#	        except OSError as exception:
+#		if exception.errno != errno.EEXIST:
+#                   raise
+
             tmp_list = os.listdir('%s/tmp' % ramdisk_dir)
             tmp_list.sort()
             tmp_len = len(tmp_list)
@@ -409,7 +417,7 @@ class Kmotion_Hkd2:
         return  : parser ... a parser instance
         """
         
-        parser = ConfigParser.SafeConfigParser()
+        parser = configparser.ConfigParser()
         try:
             mutex.acquire(kmotion_dir, 'core_rc')
             parser.read('%s/core/core_rc' % kmotion_dir)

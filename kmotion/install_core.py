@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 # Copyright 2008 David Selby dave6502@googlemail.com
 
@@ -21,7 +21,7 @@
 The core installer
 """
 
-import os, stat, sys, ConfigParser, shutil
+import os, stat, sys, configparser, shutil
 from subprocess import * # breaking habit of a lifetime !
 import core.init_core as init_core
 
@@ -58,10 +58,10 @@ def install():
         
     # ##########################################################################
     
-    print INSTALL_TEXT,
-    if raw_input() != 'install core':
+    print(INSTALL_TEXT, end=' ')
+    if input() != 'install core':
         raise exit_('Install aborted')
-    print LINE_TEXT
+    print(LINE_TEXT)
 
 
     # ##########################################################################
@@ -90,7 +90,7 @@ def install():
     kmotion_uid = os.stat('%s/install_core.py' % kmotion_dir)[stat.ST_UID]
     kmotion_gid = os.stat('%s/install_core.py' % kmotion_dir)[stat.ST_GID]
     
-    parser = ConfigParser.SafeConfigParser()
+    parser = configparser.SafeConfigParser()
     parser.read('%s/core/core_rc' % kmotion_dir)
     ramdisk_dir = parser.get('dirs', 'ramdisk_dir')
     
@@ -105,7 +105,7 @@ def install():
     checking('Initialise resource configurations')
     try: # wrapping in a try - except because parsing data from kmotion_rc
         init_core.init_rcs(kmotion_dir, ramdisk_dir)
-    except (ConfigParser.NoSectionError, ConfigParser.NoOptionError):
+    except (configparser.NoSectionError, configparser.NoOptionError):
         fail()
         raise exit_('Corrupt \'kmotion_rc\' : %s' % sys.exc_info()[1])
     ok()
@@ -142,7 +142,7 @@ def install():
     checking('Generating kmotion vhost')
     try: # wrapping in a try - except because parsing data from kmotion_rc
         init_core.gen_vhost(kmotion_dir)
-    except (ConfigParser.NoSectionError, ConfigParser.NoOptionError):
+    except (configparser.NoSectionError, configparser.NoOptionError):
         fail()
         raise exit_('Corrupt \'kmotion_rc\' : %s' % sys.exc_info()[1])
     
@@ -163,7 +163,7 @@ def install():
     init_core.gen_kmotion_ptz(kmotion_dir, kmotion_uid, kmotion_gid)
     ok()
     
-    print LINE_TEXT
+    print(LINE_TEXT)
 
 
 def check_motion(kmotion_dir):
@@ -209,7 +209,7 @@ def checking(text_):
     return  : none
     """
     
-    print text_, '.' *  (68 - len(text_)) ,
+    print(text_, '.' *  (68 - len(text_)), end=' ')
 
 
 def ok():
@@ -221,7 +221,7 @@ def ok():
     return  : none
     """
     
-    print '[ OK ]'
+    print('[ OK ]')
 
 
 def fail():
@@ -233,10 +233,10 @@ def fail():
     return  : none
     """
     
-    print '[FAIL]'
+    print('[FAIL]')
 
 
 try:
     install()
-except exit_, text:
-    print '\n%s\n' % text
+except exit_ as text:
+    print('\n%s\n' % text)

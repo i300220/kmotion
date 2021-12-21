@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 # Copyright 2008 David Selby dave6502@googlemail.com
 
@@ -15,7 +15,7 @@
 # GNU General Public License for more details.
 
 # You should have received a copy of the GNU General Public License
-# along with kmotion.  If not, see <http://www.gnu.org/licenses/>.
+# along with kmotion.  If not, see .
 
 """
 Sorts a '_rc' file into alphabetical order
@@ -23,7 +23,7 @@ Sorts a '_rc' file into alphabetical order
 
 def sort_rc(file_rc):  
     """
-    A script to sort ConfigParser generated configs into alphabetical order.
+    A script to sort configparser generated configs into alphabetical order.
     The default order appears to be random (yuk!)
     
     NOTE Sequential counts should be zero filled ie line00, line01 etc ...
@@ -46,33 +46,19 @@ def sort_rc(file_rc):
             continue
         sections[section].append(line)
         
-    keys = sections.keys()
+    keys = list(sections.keys())
     keys.sort()
     f_obj.seek(0)
     
     for section in keys:
-        print >> f_obj, section
+        print(section, file=f_obj)
+        
         sections[section].sort()
         for option in sections[section]:
-            print >> f_obj, option
-        print >> f_obj, ''
+            print(option, file=f_obj)
+            
+        print('', file=f_obj)
+        
     f_obj.truncate() 
     f_obj.close()
-            
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
+        

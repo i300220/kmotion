@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 # Copyright 2008 David Selby dave6502googlemail.com
 
@@ -21,9 +21,9 @@
 Returns a coded string data blob containing kmotion settings
 """
 
-import ConfigParser, os.path, time, random
+import configparser, os.path, time, random
 
-
+#breakpoint()
 def index(req):
     """
     Parses www_rc and returns a coded string in a dictionary like format, this
@@ -103,7 +103,7 @@ def index(req):
     www_dir = os.path.abspath('%s/../../..' % file_path)
     kmotion_dir = os.path.abspath('%s/..' % www_dir)
     
-    parser = ConfigParser.SafeConfigParser()
+    parser = configparser.ConfigParser()
     try:
         mutex_acquire(kmotion_dir)
         parser.read('%s/www_rc' % www_dir)
@@ -232,7 +232,7 @@ def mutex_acquire(kmotion_dir):
         
         # add our lock
         f_obj = open('%s/www/mutex/www_rc/%s' % (kmotion_dir, os.getpid()), 'w')
-        print >> f_obj, ''
+        print('', file=f_obj)
         f_obj.close()
             
         # wait ... see if another lock has appeared, if so remove our lock
@@ -242,7 +242,7 @@ def mutex_acquire(kmotion_dir):
             break
         os.remove('%s/www/mutex/www_rc/%s' % (kmotion_dir, os.getpid()))
         # random to avoid mexican stand-offs
-        time.sleep(float(random.randint(01, 40)) / 1000)
+        time.sleep(float(random.randint(1, 40)) / 1000)
             
         
 def mutex_release(kmotion_dir):
@@ -282,8 +282,8 @@ class Test_Class(object):
         self.filename = '../null/null'
     
 if __name__ == '__main__':
-    print '\nModule self test ...\n'
-    print index(Test_Class())
+    print('\nModule self test ...\n')
+    print(index(Test_Class()))
 
 
 

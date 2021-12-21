@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 # Copyright 2008 David Selby dave6502@googlemail.com
 
@@ -69,7 +69,7 @@ def mutex_acquire(kmotion_dir):
         
         # add our lock
         f_obj = open('%s/www/mutex/logs/%s' % (kmotion_dir, os.getpid()), 'w')
-        print >> f_obj, ''
+        print('', file=f_obj)
         f_obj.close()
             
         # wait ... see if another lock has appeared, if so remove our lock
@@ -79,7 +79,7 @@ def mutex_acquire(kmotion_dir):
             break
         os.remove('%s/www/mutex/logs/%s' % (kmotion_dir, os.getpid()))
         # random to avoid mexican stand-offs
-        time.sleep(float(random.randint(01, 40)) / 1000)
+        time.sleep(float(random.randint(1, 40)) / 1000)
             
         
 def mutex_release(kmotion_dir):
@@ -119,8 +119,8 @@ class Test_Class(object):
         self.filename = '../null/null'
     
 if __name__ == '__main__':
-    print '\nModule self test ...\n'
-    print index(Test_Class())
+    print('\nModule self test ...\n')
+    print(index(Test_Class()))
 
 
 

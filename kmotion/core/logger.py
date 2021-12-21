@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 # Copyright 2008 David Selby dave6502@googlemail.com
 
@@ -15,7 +15,7 @@
 # GNU General Public License for more details.
 
 # You should have received a copy of the GNU General Public License
-# along with kmotion.  If not, see <http://www.gnu.org/licenses/>.
+# along with kmotion.  If not, see .
 
 """
 A workaround for the buggy syslog module - should not be necessary but nothing's perfect
@@ -100,5 +100,3 @@ class Logger:
         #syslog.syslog(msg)
         #syslog.closelog()
         
-        
-

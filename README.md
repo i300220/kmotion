@@ -11,10 +11,10 @@ dans Video/Test, le test devrait afficher l'image de votre webcam).
 Installation:
 kmotion v2 a les dépendances suivantes :
 
-apache2 … v2.2.x
-apache2 python module v3.3.x
-motion … v3.2.x
-python … v2.4.x
+apache2 … v2.4.x
+apache2 python module v3.5.x
+motion … v4.3.x
+python … v3.9.x
 apache2 libapache2-mod-python motion python
 
 ou
@@ -22,7 +22,7 @@ ou
 sudo apt-get install apache2 libapache2-mod-python motion python
 
 Décompresser
-(il faut rendre les scrypt *.py exécutables)
+(il faut rendre les scripts *.py exécutables)
 
 Aller dans le dossier parent de kmotion
 Lancer dans un terminal :

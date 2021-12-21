@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 # Copyright 2008 David Selby dave6502@googlemail.com
 
@@ -23,7 +23,8 @@ when 90% of max_size_gb is reached. Responds to a SIGHUP by re-reading its
 configuration. Checks the current kmotion software version every 24 hours.
 """
 
-import os, sys, urllib, time, signal, shutil, ConfigParser, traceback
+import os, sys, urllib.request, urllib.parse, urllib.error, time, signal, shutil, configparser, traceback
+sys.path.append('.')
 import logger, daemon_whip, sort_rc, update_logs, mutex
 
 log_level = 'WARNING'
@@ -58,10 +59,10 @@ class Kmotion_Hkd1:
         """
         
         logger.log('starting daemon ...', 'CRIT') 
-        time.sleep(60) # delay to let stack settle else 'update_version' returns 
+        #time.sleep(60) # delay to let stack settle else 'update_version' returns 
                        # IOError on system boot  
         old_date = time.strftime('%Y%m%d', time.localtime(time.time()))
-        self.update_version()
+        #self.update_version()
         
         while True:   
             
@@ -96,102 +97,12 @@ class Kmotion_Hkd1:
                 
                 time.sleep(5 * 60) # to ensure journals are written
                 logger.log('midnight processes started ...', 'CRIT')
-                self.ping_server_0000()
-                self.update_version()
+                #self.ping_server_0000()
+                #self.update_version()
                 self.build_smovie_cache(date)
                 old_date = date
                 
                 
-    def update_version(self):
-        """        
-        Get the latest version string and update 'www_rc' if neccessary.
-        
-        args    : 
-        excepts : 
-        return  : none
-        """
-        
-        #latest_version = self.get_version()
-        #logger.log('parsed latest version : \'%s\'' % latest_version, 'CRIT')
-        #self.set_version(latest_version)
-        self.set_version('SVN')
-                
-                   
-    def set_version(self, version):
-        """        
-        Sets the 'version_latest' in '../www/www_rc'
-        
-        args    : 
-        excepts : 
-        return  : str ... the version string
-        """
-        
-        parser = self.mutex_www_parser_rd(self.kmotion_dir)
-        parser.set('system', 'version_latest', version)
-        self.mutex_www_parser_wr(self.kmotion_dir, parser)
-        
-        mutex.acquire(self.kmotion_dir, 'www_rc') 
-        sort_rc.sort_rc('../www/www_rc')
-        mutex.release(self.kmotion_dir, 'www_rc')
-                
-    
-    def get_version(self):
-        """        
-        Returns the latest kmotion software version by parsing the webpage
-        'http://code.google.com/p/kmotion-v2-code/downloads/list'
-        
-        args    : 
-        excepts : 
-        return  : str ... the version string or 'failed_parse'
-        """
-        
-        url = 'http://code.google.com/p/kmotion-v2-code/downloads/list'
-        opener = urllib.FancyURLopener()
-        try: # read the webpage
-            f_obj = opener.open(url)
-            html = f_obj.read()
-            f_obj.close()
-        except IOError:
-            logger.log('can\'t parse latest version from  \'%s\' IOError' % url, 'CRIT')
-            return 'failed_parse' 
-            
-        # parse the webpage for the current version, if not there must be an 
-        # 'unauthorised' version ie SVN
-        start = html.find('http://kmotion-v2-code.googlecode.com/files/kmotion_' + self.version.replace(' ', '_') + '.tar.gz')
-        if start == -1:
-            logger.log('running SVN version', 'DEBUG')
-            return 'SVN' 
-        
-        # parse the webpage for the latest version
-        start = html.find('http://kmotion-v2-code.googlecode.com/files/kmotion_') + 52
-        end = html.find('.tar.gz', start)
-        
-        if start == 44: # cant find = -1, plus 45 = 44
-            logger.log('can\'t parse latest version from  \'%s\' can\'t find string' % url, 'CRIT')
-            return 'failed_parse' 
-        
-        return html[start:end].replace('_', ' ')
-                
-    
-    def ping_server_0000(self):
-        """        
-        Loads the 'server_0000' file at midnight
-        
-        args    : 
-        excepts : 
-        return  : 
-        """
-        
-        url = 'http://kmotion2.googlecode.com/files/server_0000?rnd=' + str(time.time())
-        opener = urllib.FancyURLopener()
-        try: 
-            f_obj = opener.open(url)
-            f_obj.read()
-            f_obj.close()
-        except IOError:
-            pass
-    
-    
     def build_smovie_cache(self, date):
         """   
         Scans the 'images_dbase' for 'smovie' directories that are not todays 
@@ -346,7 +257,7 @@ class Kmotion_Hkd1:
             if os.path.isfile('%s/dir_size' % date_dir):
                 
                 f_obj = open('%s/dir_size' % date_dir)
-                bytes_ += int(f_obj.readline())
+                bytes_ += int(float(f_obj.readline()))
                 f_obj.close()
     
         logger.log('images_dbase_size() - size : %s' % bytes_, 'DEBUG')
@@ -549,14 +460,14 @@ class Kmotion_Hkd1:
         parser = self.mutex_www_parser_rd(self.kmotion_dir)
         self.version = parser.get('system', 'version')
         
-        parser = ConfigParser.SafeConfigParser()
+        parser = configparser.ConfigParser()
         try: # try - except because kmotion_rc is a user changeable file
             parser.read('../kmotion_rc') 
             self.images_dbase_dir = parser.get('dirs', 'images_dbase_dir')
             # 2**30 = 1GB
             self.max_size_gb = int(parser.get('storage', 'images_dbase_limit_gb')) * 2**30
             
-        except (ConfigParser.NoSectionError, ConfigParser.NoOptionError):
+        except (configparser.NoSectionError, configparser.NoOptionError):
             logger.log('** CRITICAL ERROR ** corrupt \'kmotion_rc\': %s' % 
                        sys.exc_info()[1], 'CRIT')
             logger.log('** CRITICAL ERROR ** killing all daemons and terminating', 'CRIT')
@@ -573,7 +484,7 @@ class Kmotion_Hkd1:
         return  : parser ... a parser instance
         """
         
-        parser = ConfigParser.SafeConfigParser()
+        parser = configparser.ConfigParser()
         try:
             mutex.acquire(kmotion_dir, 'www_rc')
             parser.read('%s/www/www_rc' % kmotion_dir)

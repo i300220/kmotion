@@ -25,7 +25,7 @@ lock to avoid process clashes.
 The 'logs' file has the format: $date#time#text$date ... 
 """
 
-import os, time, ConfigParser
+import os, time, configparser
 import logger, mutex
 
 log_level = 'WARNING'
@@ -72,7 +72,7 @@ def add_startup_event():
         
         try:
             mutex.acquire(kmotion_dir, 'core_rc') 
-            parser = ConfigParser.SafeConfigParser()
+            parser = configparser.ConfigParser()
             parser.read('../core/core_rc')
         finally:
             mutex.release(kmotion_dir, 'core_rc')

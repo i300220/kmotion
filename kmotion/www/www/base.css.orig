@@ -485,16 +485,3 @@ Main display section - CSS specific to 'logs', 'about' and 'msg'
 	margin-right: auto;
 	overflow: hidden;
 }
-
-/* ********************************************************************************
-Changes for rotated image 1
-******************************************************************************* */
-
-#main_display #image_1 {
-    height: 88% !important;
-}
-#main_display #image_6, #main_display #image_7, #main_display #image_8, #main_display #image_9,
-#main_display #text_6, #main_display #text_7, #main_display #text_8, #main_display #text_9 {
-    display:none !important;
-}
-

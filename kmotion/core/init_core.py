@@ -1,5 +1,4 @@
-#!/usr/bin/env python
-
+#!/usr/bin/env python3
 # Copyright 2008 David Selby dave6502@googlemail.com
 
 # This file is part of kmotion.
@@ -21,9 +20,12 @@
 Exports various methods used to initialize core configuration
 """
 
-import os, ConfigParser
+import os, configparser, sys
 from subprocess import * # breaking habit of a lifetime !
-import sort_rc, logger, mutex
+sys.path.append('.')
+import sort_rc
+import logger
+import mutex
 
 log_level = 'WARNING'
 logger = logger.Logger('init_core', log_level)
@@ -83,7 +85,7 @@ def init_rcs(kmotion_dir, ramdisk_dir):
     # set default images_dbase_dir in kmotion_rc
     logger.log('init_rcs() - Setting images_dbase_dir to \'%s/images_dbase\' in kmotion_rc' % kmotion_dir, 'DEBUG')
     
-    parser = ConfigParser.SafeConfigParser()
+    parser = configparser.ConfigParser()
     parser.read('%s/kmotion_rc' % kmotion_dir)
     parser.set('dirs', 'images_dbase_dir', '%s/images_dbase' % kmotion_dir)
     f_obj = open('%s/kmotion_rc' % kmotion_dir, 'w')
@@ -106,7 +108,7 @@ def update_rcs(kmotion_dir, ramdisk_dir):
     
     # copy 'images_dbase_dir' from 'kmotion_rc' to 'www_rc' 
     logger.log('update_rcs() - Copy \'images_dbase_dir\' from \'kmotion_rc\' to \'www_rc\'', 'DEBUG')
-    parser = ConfigParser.SafeConfigParser()
+    parser = configparser.ConfigParser()
     parser.read('%s/kmotion_rc' % kmotion_dir)
     images_dbase_dir = parser.get('dirs', 'images_dbase_dir')
     parser = mutex_www_parser_rd(kmotion_dir)
@@ -250,13 +252,13 @@ def set_uid_gid_mutex(kmotion_dir, uid, gid):
     core_rc =     '%s/core_rc' % mutex_
     
     os.chown(mutex_, uid, gid)
-    os.chmod(mutex_, 0770)
+    os.chmod(mutex_, 0o770)
     os.chown(logs, uid, gid)
-    os.chmod(logs, 0770)
+    os.chmod(logs, 0o770)
     os.chown(www_rc, uid, gid)
-    os.chmod(www_rc, 0770)
+    os.chmod(www_rc, 0o770)
     os.chown(core_rc, uid, gid)
-    os.chmod(core_rc, 0770)
+    os.chmod(core_rc, 0o770)
     
 
 def set_uid_gid_named_pipes(kmotion_dir, uid, gid):
@@ -271,35 +273,35 @@ def set_uid_gid_named_pipes(kmotion_dir, uid, gid):
     excepts : 
     return  : none
     """
-    
+    #breakpoint()
     # use BASH rather than os.mkfifo(), FIFO bug workaround :)
     fifo_func = '%s/www/fifo_func' % kmotion_dir
     if not os.path.exists(fifo_func):
         # os.mkfifo(fifo_func)
         call(['mkfifo', fifo_func])
     os.chown(fifo_func, uid, gid)
-    os.chmod(fifo_func, 0660)
+    os.chmod(fifo_func, 0o660)
     
     fifo_settings = '%s/www/fifo_settings_wr' % kmotion_dir
     if not os.path.exists(fifo_settings):
         # os.mkfifo(fifo_settings)
         call(['mkfifo', fifo_settings])
     os.chown(fifo_settings, uid, gid)
-    os.chmod(fifo_settings, 0660)
+    os.chmod(fifo_settings, 0o660)
     
     fifo_ptz = '%s/www/fifo_ptz' % kmotion_dir
     if not os.path.exists(fifo_ptz):
         #os.mkfifo(fifo_ptz)
         call(['mkfifo', fifo_ptz])
     os.chown(fifo_ptz, uid, gid)
-    os.chmod(fifo_ptz, 0660)
+    os.chmod(fifo_ptz, 0o660)
 
     fifo_ptz_preset = '%s/www/fifo_ptz_preset' % kmotion_dir
     if not os.path.exists(fifo_ptz_preset):
         #os.mkfifo(fifo_ptz_preset)
         call(['mkfifo', fifo_ptz_preset])
     os.chown(fifo_ptz_preset, uid, gid)
-    os.chmod(fifo_ptz_preset, 0660)
+    os.chmod(fifo_ptz_preset, 0o660)
     
     
 def set_uid_gid_servo_state(kmotion_dir, uid, gid):
@@ -317,7 +319,7 @@ def set_uid_gid_servo_state(kmotion_dir, uid, gid):
     
     servo_state = '%s/www/servo_state' % kmotion_dir
     os.chown(servo_state, uid, gid)
-    os.chmod(servo_state, 0640)  
+    os.chmod(servo_state, 0o640)  
 
     
 def gen_vhost(kmotion_dir):
@@ -332,7 +334,7 @@ def gen_vhost(kmotion_dir):
     
     logger.log('gen_vhost() - Generating vhost/kmotion file', 'DEBUG')
     
-    parser = ConfigParser.SafeConfigParser()
+    parser = configparser.ConfigParser()
     parser.read('%s/kmotion_rc' % kmotion_dir)
     images_dbase_dir = parser.get('dirs', 'images_dbase_dir')
     port = parser.get('misc', 'port')
@@ -412,10 +414,11 @@ cd %s/core
     logger.log('gen_kmotion() - Generating \'kmotion\' exe', 'DEBUG')
         
     f_obj = open('%s/kmotion' % kmotion_dir, 'w')
-    print >> f_obj, code
+    print(code, file=f_obj)
+    
     f_obj.close()    
 
-    os.chmod('%s/kmotion' % kmotion_dir, 0755)
+    os.chmod('%s/kmotion' % kmotion_dir, 0o755)
     os.chown('%s/kmotion' % kmotion_dir, uid, gid)
     
       
@@ -470,10 +473,11 @@ cd %s/core
     logger.log('gen_kmotion_ptz() - Generating \'kmotion_ptz\' exe', 'DEBUG')
     
     f_obj = open('%s/kmotion_ptz' % kmotion_dir, 'w')
-    print >> f_obj, code
+    print(code, file=f_obj)
+    
     f_obj.close()    
 
-    os.chmod('%s/kmotion_ptz' % kmotion_dir, 0755)
+    os.chmod('%s/kmotion_ptz' % kmotion_dir, 0o755)
     os.chown('%s/kmotion_ptz' % kmotion_dir, uid, gid)
     
     
@@ -487,7 +491,7 @@ def mutex_www_parser_rd(kmotion_dir):
     return  : parser ... a parser instance
     """
     
-    parser = ConfigParser.SafeConfigParser()
+    parser = configparser.ConfigParser()
     try:
         mutex.acquire(kmotion_dir, 'www_rc')
         parser.read('%s/www/www_rc' % kmotion_dir)
@@ -525,7 +529,7 @@ def mutex_core_parser_rd(kmotion_dir):
     return  : parser ... a parser instance
     """
     
-    parser = ConfigParser.SafeConfigParser()
+    parser = configparser.ConfigParser()
     try:
         mutex.acquire(kmotion_dir, 'core_rc')
         parser.read('%s/core/core_rc' % kmotion_dir)

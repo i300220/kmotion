@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 # Copyright 2008 David Selby dave6502@googlemail.com
 
@@ -68,8 +68,8 @@ class Test_Class(object):
         self.filename = '../null/null'
 
 if __name__ == '__main__':
-    print '\nModule self test ...\n'
-    print index(Test_Class())
+    print('\nModule self test ...\n')
+    print(index(Test_Class()))
 
 
 

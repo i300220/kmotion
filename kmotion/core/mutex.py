@@ -1,5 +1,4 @@
- 
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 # Copyright 2008 David Selby dave6502@googlemail.com
 
@@ -16,7 +15,7 @@
 # GNU General Public License for more details.
 
 # You should have received a copy of the GNU General Public License
-# along with kmotion.  If not, see <http://www.gnu.org/licenses/>.
+# along with kmotion.  If not, see .
 
 """
 Export mutex lock functions for the '../www/mutex/' files
@@ -75,7 +74,7 @@ def acquire(kmotion_dir, mutex):
             break
         os.remove('%s/www/mutex/%s/%s' % (kmotion_dir, mutex, os.getpid()))
         # random to avoid mexican stand-offs
-        time.sleep(float(random.randint(01, 40)) / 1000)
+        time.sleep(float(random.randint(0o1, 40)) / 1000)
             
         
 def release(kmotion_dir, mutex):
@@ -106,6 +105,13 @@ def check_lock(kmotion_dir, mutex):
     files.sort()
     if len(files) > 0 and files[0] == '.svn': # strip the .svn dir
         files.pop(0)
-    return len(files)
-        
-        
+    #return len(files)
+    ret = []
+    for file in files:
+        if os.path.isdir("/proc/" + os.path.basename(file)):
+            ret.append(file)
+        else:
+            os.remove(file)
+    return len(ret)
+    
+            

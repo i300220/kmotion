@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 # Copyright 2008 David Selby dave6502@googlemail.com
 
@@ -23,6 +23,7 @@ appropriate script exists and execute it
 """
 
 import sys, os.path, subprocess, time, traceback
+sys.path.append('.')
 import logger
  
 log_level = 'WARNING'
@@ -46,7 +47,7 @@ def main():
         
         logger.log('waiting on FIFO pipe data', 'DEBUG')
         data = subprocess.Popen(['cat', '%s/www/fifo_func' % kmotion_dir], stdout=subprocess.PIPE).communicate()[0]
-        data = data.rstrip()
+        data = data.rstrip().decode()
         logger.log('FIFO pipe data: %s' % data, 'DEBUG')
         
         if len(data) > 2 and data[-3:] == '999': # FIFO purge

@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 # Copyright 2008 David Selby dave6502@googlemail.com
 
@@ -113,8 +113,8 @@ def index():
 
 # Module self test
 if __name__ == '__main__':
-    print '\nModule self test ...\n'
-    print index()
+    print('\nModule self test ...\n')
+    print(index())
 
 
 

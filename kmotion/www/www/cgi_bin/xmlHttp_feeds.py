@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 # Copyright 2008 David Selby dave6502@googlemail.com
 
@@ -21,7 +21,7 @@
 Returns the latest jpeg filenames and event status
 """
 
-import time, os, os.path, cPickle
+import time, os, os.path, pickle
 
 
 def index(req):
@@ -49,8 +49,8 @@ def index(req):
     # unpickle 'feed_cache' list which has the format
     # ['ramdisk_dir', 'feed 1 enabled', 'feed 2 enabled', .....]
     # called multiple times per sec, no time for mutex :)
-    f_obj = open('%s/www/feeds_cache' % kmotion_dir)
-    cache = cPickle.load(f_obj)
+    f_obj = open('%s/www/feeds_cache' % kmotion_dir, 'rb')
+    cache = pickle.load(f_obj)
     f_obj.close()
     
     ramdisk_dir = cache[0]
@@ -114,8 +114,8 @@ class Test_Class(object):
         self.filename = '../null/null'
 
 if __name__ == '__main__':
-    print '\nModule self test ...\n'
-    print index(Test_Class())
+    print('\nModule self test ...\n')
+    print(index(Test_Class()))
 
 
 

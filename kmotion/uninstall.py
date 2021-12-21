@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 # Copyright 2008 David Selby dave6502@googlemail.com
 
@@ -68,10 +68,10 @@ def uninstall():
     
     # ##########################################################################
     
-    print UNINSTALL_TEXT,
-    if raw_input() != 'uninstall':
+    print(UNINSTALL_TEXT, end=' ')
+    if input() != 'uninstall':
         raise exit_('Uninstall aborted')
-    print LINE_TEXT,
+    print(LINE_TEXT, end=' ')
 
     # ##########################################################################
     
@@ -117,7 +117,7 @@ def uninstall():
     rm_crontab_boot()
     ok()
 
-    print COMPLETION_TEXT
+    print(COMPLETION_TEXT)
 
 
 def rm_exes():
@@ -249,7 +249,7 @@ def checking(text_):
     return  : none
     """
     
-    print text_, '.' *  (68 - len(text_)) ,
+    print(text_, '.' *  (68 - len(text_)), end=' ')
 
 
 def ok():
@@ -261,7 +261,7 @@ def ok():
     return  : none
     """
     
-    print '[ OK ]'
+    print('[ OK ]')
 
 
 def fail():
@@ -273,10 +273,10 @@ def fail():
     return  : none
     """
     
-    print '[FAIL]'
+    print('[FAIL]')
 
 
 try:
     uninstall()
-except exit_, text:
-    print '\n%s\n' % text
+except exit_ as text:
+    print('\n%s\n' % text)

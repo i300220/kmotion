@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 # Copyright 2008 David Selby dave6502googlemail.com
 
@@ -22,7 +22,8 @@ Waits on the 'fifo_settings_wr' fifo until data received then parse the data
 and modifiy 'www_rc', also updates 'feeds_cache'
 """
 
-import sys, os.path, subprocess, ConfigParser, logger, time, cPickle, traceback
+import sys, os.path, subprocess, configparser, logger, time, pickle, traceback
+sys.path.append('.')
 import sort_rc, daemon_whip, init_motion, mutex
 
 log_level = 'WARNING'
@@ -121,7 +122,7 @@ def main():
         
         logger.log('waiting on FIFO pipe data', 'DEBUG')
         data = subprocess.Popen(['cat', '%s/www/fifo_settings_wr' % kmotion_dir], stdout=subprocess.PIPE).communicate()[0]
-        data = data.rstrip()
+        data = data.rstrip().decode()
         logger.log('FIFO pipe data: %s' % data, 'DEBUG')
         
         if len(data) < 8:
@@ -379,10 +380,10 @@ def create_mask(kmotion_dir, feed, mask_hex_str):
         mask += image_line * px_mult
         
     f_obj = open('%s/core/masks/mask%0.2d.pgm' % (kmotion_dir, feed), mode='wb')
-    print >> f_obj, 'P5'
-    print >> f_obj, '%d %d' % (image_width, image_height)
-    print >> f_obj, '255'
-    print >> f_obj, mask
+    print('P5', file=f_obj)
+    print('%d %d' % (image_width, image_height), file=f_obj)
+    print('255', file=f_obj)
+    print(mask, file=f_obj)
     f_obj.close()
     logger.log('create_mask() - mask written', 'DEBUG')
     
@@ -409,8 +410,9 @@ def update_feeds_cache(kmotion_dir):
         else:
             cache.append(False)
             
-    f_obj = open('%s/www/feeds_cache' % kmotion_dir, 'w')
-    cPickle.dump(cache, f_obj)
+    f_obj = open('%s/www/feeds_cache' % kmotion_dir, 'wb')
+    #breakpoint()
+    pickle.dump(cache, f_obj)
     f_obj.close()
             
     
@@ -424,7 +426,7 @@ def mutex_www_parser_rd(kmotion_dir):
     return  : parser ... a parser instance
     """
     
-    parser = ConfigParser.SafeConfigParser()
+    parser = configparser.ConfigParser()
     try:
         mutex.acquire(kmotion_dir, 'www_rc')
         parser.read('%s/www/www_rc' % kmotion_dir)

@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 # Copyright 2008 David Selby dave6502@googlemail.com
 
@@ -25,7 +25,7 @@ This is a difficult PT(Z) to work with, it just has 'home' and relative
 movements, no absolutes, no step values. Its been interesting :)
 """
 
-import os, urllib, cPickle, time
+import os, urllib.request, urllib.parse, urllib.error, pickle, time
 import logger
 
 log_level = 'DEBUG'
@@ -169,7 +169,7 @@ def touch_url(feed_url, cgi_url, feed_proxy, feed_lgn_name, feed_lgn_pw):
     base_url = '%s%s' % (url_prot, url_body)
     
     logger.log('touch_url() - %s%s' % (base_url, cgi_url), 'DEBUG')
-    f_obj = urllib.urlopen('%s%s' % (base_url, cgi_url))
+    f_obj = urllib.request.urlopen('%s%s' % (base_url, cgi_url))
     time.sleep(0.2)
     f_obj.close()
     
@@ -187,7 +187,7 @@ def save_xy_step_xy(feed, x, y, step_x, step_y):
     """
     
     f_obj = open('ptz_drivers/abs_xy/%02ixy' % feed, 'w')
-    cPickle.dump([x, y, step_x, step_y], f_obj)
+    pickle.dump([x, y, step_x, step_y], f_obj)
     f_obj.close()
     
     
@@ -204,7 +204,7 @@ def load_xy_step_xy(feed):
     data = [0, 0, 0, 0]
     if os.path.isfile('ptz_drivers/abs_xy/%02ixy' % feed):
         f_obj = open('ptz_drivers/abs_xy/%02ixy' % feed)
-        data = cPickle.load(f_obj)
+        data = pickle.load(f_obj)
         f_obj.close()
         
     if len(data) != 4:

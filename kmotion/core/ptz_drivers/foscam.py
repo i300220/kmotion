@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 # Copyright 2008, 2010 David Selby dave6502@googlemail.com, Dominique Perrodon
 # dominique.perrodon@gmail.com
@@ -42,7 +42,7 @@ permanently the camera parameters without user agreement/knowledge
 So uncomment where stated to do it)
 """
 
-import os, urllib2, cPickle, time
+import os, urllib.request, urllib.error, urllib.parse, pickle, time
 import logger
 
 log_level = 'DEBUG'
@@ -172,6 +172,8 @@ feed_y), 'DEBUG')
     # disable IR for cameras that are inside looking out a window
     if feed == 5:
         touch_url(feed_url, URL_CGI_IO_OFF, feed_proxy, feed_lgn_name, feed_lgn_pw)
+    if feed == 6:
+        touch_url(feed_url, URL_CGI_IO_ON, feed_proxy, feed_lgn_name, feed_lgn_pw)
 # uncomment to speed up motors
     #touch_url(feed_url, URL_CGI_CALIB2, feed_proxy, feed_lgn_name, feed_lgn_pw)
 # disabled 20140315 to avoid reset to right-down position
@@ -262,12 +264,12 @@ feed_lgn_pw):
     #/camera_control.cgi?param=0&value=8&user=shizuma&pwd=03933&rate=3
     #f_obj = urllib.urlopen('%s%s' % (base_url, cgi_url))
     theurl = '%s%s' % (base_url, cgi_url)
-    passman = urllib2.HTTPPasswordMgrWithDefaultRealm()
+    passman = urllib.request.HTTPPasswordMgrWithDefaultRealm()
     passman.add_password(None, theurl, feed_lgn_name, feed_lgn_pw)
-    authhandler = urllib2.HTTPBasicAuthHandler(passman)
-    opener = urllib2.build_opener(authhandler)
-    urllib2.install_opener(opener)
-    f_obj = urllib2.urlopen(theurl)
+    authhandler = urllib.request.HTTPBasicAuthHandler(passman)
+    opener = urllib.request.build_opener(authhandler)
+    urllib.request.install_opener(opener)
+    f_obj = urllib.request.urlopen(theurl)
 
     time.sleep(0.5)
     f_obj.close()
@@ -284,9 +286,9 @@ def save_xy_step_xy(feed, x, y, step_x, step_y):
     excepts :
     return  :
     """
-
-    f_obj = open('ptz_drivers/abs_xy/%02ixy' % feed, 'w')
-    cPickle.dump([x, y, step_x, step_y], f_obj)
+    #breakpoint()
+    f_obj = open('ptz_drivers/abs_xy/%02ixy' % feed, 'wb')
+    pickle.dump([x, y, step_x, step_y], f_obj)
     f_obj.close()
 
     
@@ -302,8 +304,9 @@ def load_xy_step_xy(feed):
 
     data = [0, 0, 0, 0]
     if os.path.isfile('ptz_drivers/abs_xy/%02ixy' % feed):
-        f_obj = open('ptz_drivers/abs_xy/%02ixy' % feed)
-        data = cPickle.load(f_obj)
+        #breakpoint()
+        f_obj = open('ptz_drivers/abs_xy/%02ixy' % feed, 'rb')
+        data = pickle.load(f_obj)
         f_obj.close()
 
     if len(data) != 4:
