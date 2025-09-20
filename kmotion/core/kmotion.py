@@ -108,7 +108,15 @@ Reference Bug #235599.""")
     else:
         daemon_whip.start_daemons()
         daemon_whip.reload_all_configs()
-          
+    
+    time.sleep(1) # purge all fifo buffers, FIFO bug workaround :)
+    purge_str = str('#' * 1000 + '99999999')
+    for fifo in ['fifo_func', 'fifo_ptz', 'fifo_ptz_preset', 'fifo_settings_wr']:
+        pipeout = open('%s/www/%s' % (kmotion_dir, fifo), 'w')
+        pipeout.write(purge_str)
+        pipeout.close
+
+      
     #breakpoint()        
     #time.sleep(1) # purge all fifo buffers, FIFO bug workaround :)
     #purge_str = '#' * 1000 + '99999999'

@@ -143,9 +143,10 @@ def gen_threads_conf(kmotion_dir, feed_list, ramdisk_dir, images_dbase_dir, pars
 # ------------------------------------------------------------------------------
 #
 event_gap 2
-pre_capture 1
-#post_capture 16
-post_capture 4
+#pre_capture 1
+pre_capture 0
+post_capture 0
+#post_capture 4
 #
 # ------------------------------------------------------------------------------
 # 'user' section from 'virtual_motion_conf/thread%02i.conf'
@@ -178,14 +179,14 @@ stream_localhost on
         # device and input
         feed_device = int(parser.get('motion_feed%02i' % feed, 'feed_device'))
         if feed_device != 16: # /dev/cam? device
-            print('videodevice /dev/cam%s' % feed_device, file=f_obj1)
+            print('video_device /dev/cam%s' % feed_device, file=f_obj1)
             
-            print('input %s' % parser.get('motion_feed%02i' % feed, 'feed_input'), file=f_obj1)
+            print('video_params input=%s' % parser.get('motion_feed%02i' % feed, 'feed_input'), file=f_obj1)
             
         else: # netcam
             print('netcam_url  %s' % parser.get('motion_feed%02i' % feed, 'feed_url'), file=f_obj1)
             
-            print('netcam_proxy %s' % parser.get('motion_feed%02i' % feed, 'feed_proxy'), file=f_obj1)
+            print('netcam_params proxy=%s' % parser.get('motion_feed%02i' % feed, 'feed_proxy'), file=f_obj1)
             
             print('netcam_userpass %s:%s' % (parser.get('motion_feed%02i' % feed, 'feed_lgn_name'), parser.get('motion_feed%02i' % feed, 'feed_lgn_pw')), file=f_obj1)
             

@@ -66,12 +66,12 @@ def reset():
     return  : none
     """
     
-    print CHANGE_TEXT,
-    raw_ip = raw_input()
+    print(CHANGE_TEXT, end=' ')
+    raw_ip = input()
     if raw_ip != 'change':
         raise exit_('Change aborted')
         
-    print LINE_TEXT
+    print(LINE_TEXT)
          
     # check we are running as root
     checking('Checking changer is running as root')
@@ -92,17 +92,17 @@ def reset():
     # if we are in the root dir set kmotion_dir
     kmotion_dir = os.getcwd()
     
-    print UNAME_TEXT,
-    uname = raw_input()
+    print(UNAME_TEXT, end=' ')
+    uname = input()
     if len(uname) < 2:
         raise exit_('User name is too short, must be at least 2 characters')
     
-    print PASSWORD_TEXT,
-    password = raw_input()
+    print(PASSWORD_TEXT, end=' ')
+    password = input()
     if len(password) < 4:
         raise exit_('Password too short, must be at least 4 characters')
     
-    print LINE_TEXT
+    print(LINE_TEXT)
     
     checking('Changing user name and password')
     # creates 'users_digest' and leaves it as user root, not an issue
@@ -124,8 +124,8 @@ def reset():
     ok()
     time.sleep(10)
 
-    print FOOTER_TEXT
-    print LINE_TEXT
+    print(FOOTER_TEXT)
+    print(LINE_TEXT)
 
     
 def checking(text_):
@@ -137,7 +137,7 @@ def checking(text_):
     return  : none
     """
     
-    print text_, '.' *  (68 - len(text_)) ,
+    print(text_, '.' *  (68 - len(text_)), end=' ')
 
 
 def ok():
@@ -149,7 +149,7 @@ def ok():
     return  : none
     """
     
-    print '[ OK ]'
+    print('[ OK ]')
 
 
 def fail():
@@ -161,12 +161,12 @@ def fail():
     return  : none
     """
     
-    print '[FAIL]'
+    print('[FAIL]')
 
     
 try:
     reset()
-except exit_, text:
-    print '\n%s\n' % text
+except exit_ as text:
+    print('\n%s\n' % text)
     
     
