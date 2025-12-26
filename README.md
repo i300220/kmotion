@@ -23,7 +23,7 @@ ou
 
 sudo apt-get install apache2 motion python
 
-libapache2-mod-python n'est malheureusement plus supporte alors il faut le recompiler dans un environnement debian 11 ou 12
+libapache2-mod-python n'est malheureusement plus supporte alors il faut le recompiler dans un environnement debian 11 ou 12 et python 3.9 ou 3.12.
 
 Décompresser
 (il faut rendre les scripts *.py exécutables)
