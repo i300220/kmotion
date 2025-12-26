@@ -12,13 +12,17 @@ Installation:
 kmotion v2 a les dépendances suivantes pour debian trixie:
 
 apache2 2.4.x
+
 apache2 python module mod-python 3.5.0+git20211031 
+
 motion v4.7.x
+
 python v3.13.x
 
 ou
 
 sudo apt-get install apache2 motion python
+
 libapache2-mod-python n'est malheureusement plus supporte alors il faut le recompiler dans un environnement debian 11 ou 12
 
 Décompresser
